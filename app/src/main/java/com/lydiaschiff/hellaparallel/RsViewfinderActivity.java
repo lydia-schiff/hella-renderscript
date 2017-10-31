@@ -33,6 +33,7 @@ public class RsViewfinderActivity extends BaseViewfinderActivity {
 
     private RenderScript rs;
     private RsCameraPreviewRenderer cameraPreviewRenderer;
+    private Toast rendererNameToast;
     private String rendererName;
 
     private int currentRendererIndex = 0;
@@ -62,7 +63,11 @@ public class RsViewfinderActivity extends BaseViewfinderActivity {
         findViewById(R.id.next_button).setOnClickListener(view -> {
             cycleRendererType();
             updateRsRenderer();
-            Toast.makeText(RsViewfinderActivity.this, rendererName, Toast.LENGTH_SHORT).show();
+            if (rendererNameToast != null) {
+                rendererNameToast.cancel();
+            }
+            rendererNameToast = Toast.makeText(RsViewfinderActivity.this, rendererName, Toast.LENGTH_LONG);
+            rendererNameToast.show();
         });
 
         rs = RenderScript.create(this);
@@ -100,7 +105,6 @@ public class RsViewfinderActivity extends BaseViewfinderActivity {
                     new RsCameraPreviewRenderer(rs, outputSize.getWidth(), outputSize.getHeight());
         }
         updateRsRenderer();
-        Toast.makeText(RsViewfinderActivity.this, rendererName, Toast.LENGTH_LONG).show();
         return cameraPreviewRenderer;
     }
 

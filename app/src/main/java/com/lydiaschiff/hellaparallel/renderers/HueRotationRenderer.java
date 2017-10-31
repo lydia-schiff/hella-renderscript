@@ -27,12 +27,12 @@ public class HueRotationRenderer implements RsRenderer {
     public void renderFrame(RenderScript rs, Allocation in, Allocation out) {
         if (colorMatrixScript == null) {
             colorMatrixScript = ScriptIntrinsicColorMatrix.create(rs);
-            colorMatrixScript.setColorMatrix(colorMatrix);
         }
 
         // change the hue a bit each frame
         hueOffset += INCREMENT;
         setColorMatrix3f(colorMatrix, hueOffset);
+        colorMatrixScript.setColorMatrix(colorMatrix);
 
         colorMatrixScript.forEach(in, out);
     }

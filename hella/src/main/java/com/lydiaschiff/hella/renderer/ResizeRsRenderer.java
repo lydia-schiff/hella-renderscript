@@ -19,7 +19,9 @@ public class ResizeRsRenderer implements RsRenderer {
     public void renderFrame(RenderScript rs, Allocation in, Allocation out) {
         if (resizeScript == null) {
             resizeScript = ScriptIntrinsicResize.create(rs);
+            resizeScript.setInput(in);
         }
+        resizeScript.forEach_bicubic(out);
     }
 
     @Override

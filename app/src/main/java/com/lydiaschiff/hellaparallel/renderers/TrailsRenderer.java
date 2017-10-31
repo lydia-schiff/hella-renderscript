@@ -38,7 +38,7 @@ public class TrailsRenderer implements RsRenderer {
 
         blendScript.forEachSrcAtop(in, out);
 
-        last.copyFrom(in);//out);
+        last.copyFrom(out);
     }
 
     @Override

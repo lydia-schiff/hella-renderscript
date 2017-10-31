@@ -21,8 +21,8 @@ public class AcidRenderer implements RsRenderer {
         if (tempRgb == null) {
             tempRgb = RsUtil.createMatchingAlloc(rs, in);
         }
-        trailsRenderer.renderFrame(rs, in, tempRgb);
-        hueRotationRenderer.renderFrame(rs, tempRgb, out);
+        hueRotationRenderer.renderFrame(rs, in, tempRgb);
+        trailsRenderer.renderFrame(rs, tempRgb, out);
     }
 
     @Override

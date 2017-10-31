@@ -66,7 +66,8 @@ public class RsViewfinderActivity extends BaseViewfinderActivity {
             if (rendererNameToast != null) {
                 rendererNameToast.cancel();
             }
-            rendererNameToast = Toast.makeText(RsViewfinderActivity.this, rendererName, Toast.LENGTH_LONG);
+            rendererNameToast =
+                    Toast.makeText(RsViewfinderActivity.this, rendererName, Toast.LENGTH_LONG);
             rendererNameToast.show();
         });
 

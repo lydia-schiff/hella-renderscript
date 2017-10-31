@@ -68,9 +68,6 @@ public abstract class BaseViewfinderActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         mCameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
         mUiHandler = new Handler(Looper.getMainLooper());
-
-        // set callback for configuring the view surface
-        getViewfinderSurfaceView().getHolder().addCallback(this);
     }
 
     /**
@@ -122,6 +119,10 @@ public abstract class BaseViewfinderActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        // set callback for configuring the view surface
+        getViewfinderSurfaceView().getHolder().addCallback(this);
+
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
         if (!checkCameraPermissions()) {

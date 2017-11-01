@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import com.lydiaschiff.hella.RsRenderer;
 import com.lydiaschiff.hella.RsUtil;
 import com.lydiaschiff.hella.renderer.ResizeRsRenderer;
+import com.lydiaschiff.hella.renderer.ScriptC_color_frame;
 
 import java.util.Random;
 

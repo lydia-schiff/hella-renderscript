@@ -3,6 +3,11 @@ package com.lydiaschiff.hella;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.RenderScript;
+import android.util.Log;
+
+import com.lydiaschiff.hella.renderer.ScriptC_color_frame;
+import com.lydiaschiff.hella.renderer.ScriptC_set_alpha;
+import com.lydiaschiff.hella.renderer.ScriptC_to_grey;
 
 /**
  * Created by lydia on 10/30/17.
@@ -10,7 +15,28 @@ import android.renderscript.RenderScript;
 
 public final class Hella {
 
+    private static final String TAG = "Hella";
+
     private Hella() {} // no instances
+
+    /**
+     * These are custom kernels that are AoT compiled on the very first launch so we want to make
+     * sure that happens outside of a render loop and also not in the UI thread.
+     */
+    public static void warmUpInBackground(RenderScript rs) {
+        new Thread(() -> {
+            Log.i(TAG, "RS warmup start...");
+            long start = System.currentTimeMillis();
+            try {
+                ScriptC_color_frame color_frame = new ScriptC_color_frame(rs);
+                ScriptC_set_alpha set_alpha = new ScriptC_set_alpha(rs);
+                ScriptC_to_grey to_grey = new ScriptC_to_grey(rs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Log.i(TAG, "RS warmup end, " + (System.currentTimeMillis() - start) + " ms");
+        }).start();
+    }
 
     /**
      * @param context

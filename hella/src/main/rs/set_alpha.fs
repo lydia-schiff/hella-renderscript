@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(com.lydiaschiff.hellaparallel.renderers)
+#pragma rs java_package_name(com.lydiaschiff.hella.renderer)
 
 uchar alpha;
 

@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 /**
- * Created by lydia on 10/30/17.
+ * todo: this needs to be tested
  */
 public class RsBitmapRenderer {
 

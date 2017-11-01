@@ -14,6 +14,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.view.Surface;
 
+import com.lydiaschiff.hella.FrameStats;
 import com.lydiaschiff.hella.RsRenderer;
 import com.lydiaschiff.hella.RsSurfaceRenderer;
 import com.lydiaschiff.hella.RsUtil;
@@ -41,7 +42,10 @@ public class RsCameraPreviewRenderer
     // all guarded by "this"
     private Handler renderHandler;
     private RsRenderer rsRenderer;
+    private FrameStats droppedFrameLogger;
     private int nFramesAvailable;
+    private int totalFrames;
+    private int totalDropped;
     private boolean outputSurfaceIsSet;
 
     /**
@@ -103,8 +107,17 @@ public class RsCameraPreviewRenderer
     public synchronized void setRsRenderer(RsRenderer rsRenderer) {
         if (isRunning()) {
             this.rsRenderer = rsRenderer;
-            Log.i(TAG, "updating RsRenderer to " + rsRenderer.getName());
+            Log.i(TAG, "updating RsRenderer to \"" + rsRenderer.getName() + "\"");
+            totalFrames = 0;
+            totalDropped = 0;
+            if (droppedFrameLogger != null) {
+                droppedFrameLogger.clear();
+            }
         }
+    }
+
+    public synchronized void setDroppedFrameLogger(FrameStats droppedFrameLogger) {
+        this.droppedFrameLogger = droppedFrameLogger;
     }
 
     /**
@@ -188,17 +201,27 @@ public class RsCameraPreviewRenderer
             renderer = rsRenderer;
             nFrames = nFramesAvailable;
             nFramesAvailable = 0;
+
+            logFrames(nFrames);
+
             renderHandler.removeCallbacks(this);
         }
-        if (nFrames > 1) {
-            Log.d(TAG, "renderer is falling behind, dropping " + (nFrames - 1) + "frames");
-        }
+
         for (int i = 0; i < nFrames; i++) {
             yuvInAlloc.ioReceive();
         }
         yuvToRGBScript.forEach(rgbInAlloc);
         renderer.renderFrame(rs, rgbInAlloc, rgbOutAlloc);
         rgbOutAlloc.ioSend();
+    }
+
+    private void logFrames(int nFrames) {
+        if (droppedFrameLogger != null) {
+            totalFrames++;
+            int droppedFrames = nFrames - 1;
+            totalDropped += droppedFrames;
+            droppedFrameLogger.logFrame(TAG, droppedFrames, totalDropped, totalFrames);
+        }
     }
 
     /**
@@ -214,6 +237,7 @@ public class RsCameraPreviewRenderer
                 renderHandler.postAtFrontOfQueue(() -> {
                     Log.i(TAG, "shutting down");
                     synchronized (this) {
+                        droppedFrameLogger = null;
                         yuvInAlloc.destroy();
                         rgbInAlloc.destroy();
                         rgbOutAlloc.destroy();

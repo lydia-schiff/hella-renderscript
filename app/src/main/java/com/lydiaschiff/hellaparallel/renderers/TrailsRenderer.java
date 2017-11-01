@@ -7,6 +7,7 @@ import android.support.annotation.RequiresApi;
 
 import com.lydiaschiff.hella.RsRenderer;
 import com.lydiaschiff.hella.RsUtil;
+import com.lydiaschiff.hella.renderer.ScriptC_set_alpha;
 
 /**
  * Created by lydia on 10/17/17.

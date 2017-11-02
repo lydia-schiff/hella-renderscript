@@ -22,8 +22,8 @@ public class BlurRsRenderer implements RsRenderer {
         if (blurScript == null) {
             blurScript = ScriptIntrinsicBlur.create(rs, in.getElement());
             blurScript.setRadius(BLUR_RADIUS);
-            blurScript.setInput(in);
         }
+        blurScript.setInput(in);
         blurScript.forEach(out);
     }
 

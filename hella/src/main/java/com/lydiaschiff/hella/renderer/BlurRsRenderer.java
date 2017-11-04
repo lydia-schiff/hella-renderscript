@@ -13,7 +13,7 @@ import com.lydiaschiff.hella.RsRenderer;
 @RequiresApi(17)
 public class BlurRsRenderer implements RsRenderer {
 
-    private static final float BLUR_RADIUS = 8; // in range [0, 25]
+    private static final float BLUR_RADIUS = 10; // in range [0, 25]
 
     private ScriptIntrinsicBlur blurScript;
 
@@ -29,7 +29,7 @@ public class BlurRsRenderer implements RsRenderer {
 
     @Override
     public String getName() {
-        return "gaussian blur with ScriptIntrinsicBlur";
+        return "Gaussian blur (radius " + BLUR_RADIUS + ") with ScriptIntrinsicBlur";
     }
 
     @Override

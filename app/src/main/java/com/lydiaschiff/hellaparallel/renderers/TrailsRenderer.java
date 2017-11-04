@@ -31,10 +31,10 @@ public class TrailsRenderer implements RsRenderer {
 
         // setting the alpha here is just to trick ScriptIntrinsicBlend to do linear
         // interpolation for us
-        setAlphaScript.set_alpha((short) 200);
+        setAlphaScript.set_alpha_value((short) 200);
         setAlphaScript.forEach_filter(out, out);
 
-        setAlphaScript.set_alpha((short) 55);
+        setAlphaScript.set_alpha_value((short) 55);
         setAlphaScript.forEach_filter(in, in);
 
         blendScript.forEachSrcAtop(in, out);

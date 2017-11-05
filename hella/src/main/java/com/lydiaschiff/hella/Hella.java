@@ -23,18 +23,21 @@ public final class Hella {
      * These are custom kernels that are AoT compiled on the very first launch so we want to make
      * sure that happens outside of a render loop and also not in the UI thread.
      */
-    public static void warmUpInBackground(RenderScript rs) {
-        new Thread(() -> {
-            Log.i(TAG, "RS warmup start...");
-            long start = System.currentTimeMillis();
-            try {
-                ScriptC_color_frame color_frame = new ScriptC_color_frame(rs);
-                ScriptC_set_alpha set_alpha = new ScriptC_set_alpha(rs);
-                ScriptC_to_grey to_grey = new ScriptC_to_grey(rs);
-            } catch (Exception e) {
-                e.printStackTrace();
+    public static void warmUpInBackground(final RenderScript rs) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "RS warmup start...");
+                long start = System.currentTimeMillis();
+                try {
+                    ScriptC_color_frame color_frame = new ScriptC_color_frame(rs);
+                    ScriptC_set_alpha set_alpha = new ScriptC_set_alpha(rs);
+                    ScriptC_to_grey to_grey = new ScriptC_to_grey(rs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.i(TAG, "RS warmup end, " + (System.currentTimeMillis() - start) + " ms");
             }
-            Log.i(TAG, "RS warmup end, " + (System.currentTimeMillis() - start) + " ms");
         }).start();
     }
 

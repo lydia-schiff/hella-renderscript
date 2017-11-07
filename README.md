@@ -14,8 +14,8 @@
 
 [RS Java API source code](https://android.googlesource.com/platform/frameworks/base/+/master/rs/java/android/renderscript)
 
-### Excelent Examples with walkthoughs
-#### Marchetti Book + Examples
+### Excellent examples with walkthoughs
+#### Marchetti book + examples
 [Renderscript: Parallel Computing on Android the Easy Way](https://hydex11.net/renderscript_parallel_computing_on_android_the_easy_way)
 - [book examples](https://bitbucket.org/cmaster11/rsbookexamples)
 
@@ -41,7 +41,7 @@ https://developer.android.com/training/articles/perf-jni.html
 
 https://developer.android.com/training/articles/smp.html
 
-### Other Options for compute (mostly GLES)
+### Other options for compute (mostly GLES)
 https://github.com/CyberAgent/android-gpuimage
 
 https://github.com/googlesamples/android-MediaEffects

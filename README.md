@@ -1,7 +1,6 @@
 # Hella-Parallel Compute with RenderScript
 - Example app for RGB Rendering for Bitmaps and the camera viewfinder.
-- Released with a talk _Hella-Parallel Compute with RenderScript_ at droidcon sf 2017.
-- link to video and slides, additional docs and usage examples
+- Associated talk: [_Hella-Parallel Compute with RenderScript_](https://youtu.be/eebG8SMYD20) at droidcon sf 2017.
 
 ## References!
 ### Essentials + source code (somtimes the best docs we have)

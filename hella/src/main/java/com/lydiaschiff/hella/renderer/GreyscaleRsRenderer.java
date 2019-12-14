@@ -5,7 +5,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicColorMatrix;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 import com.lydiaschiff.hella.RsRenderer;
 

@@ -1,6 +1,6 @@
 package com.lydiaschiff.hella;
 
-import android.support.annotation.AnyThread;
+import androidx.annotation.AnyThread;
 import android.view.Surface;
 
 /**

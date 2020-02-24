@@ -3,7 +3,7 @@ package com.lydiaschiff.hella.renderer;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicConvolve5x5;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 import com.lydiaschiff.hella.RsRenderer;
 

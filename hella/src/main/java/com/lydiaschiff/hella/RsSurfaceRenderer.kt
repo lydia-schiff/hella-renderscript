@@ -1,27 +1,27 @@
-package com.lydiaschiff.hella;
+package com.lydiaschiff.hella
 
-import androidx.annotation.AnyThread;
-import android.view.Surface;
+import android.view.Surface
+import androidx.annotation.AnyThread
 
 /**
  * Created by lydia on 10/30/17.
  */
 @AnyThread
-public interface RsSurfaceRenderer {
+interface RsSurfaceRenderer {
     /**
      * Set an output Surface, probably from a SurfaceView or TextureView.
      */
-    void setOutputSurface(Surface surface);
+    fun setOutputSurface(surface: Surface)
 
     /**
      * Get the input Surface, usually passed to Camera2 CaptureSession. This Surface is expecting to
      * consume streaming YUV buffers from the camera.
      */
-    Surface getInputSurface();
+    val inputSurface: Surface?
 
-    void setRsRenderer(RsRenderer rsRenderer);
+    val isRunning: Boolean
 
-    boolean isRunning();
+    fun setRsRenderer(rsRenderer: RsRenderer)
 
-    void shutdown();
+    fun shutdown()
 }

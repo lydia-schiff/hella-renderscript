@@ -8,6 +8,7 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.WorkerThread;
@@ -19,6 +20,8 @@ import com.lydiaschiff.hella.RsRenderer;
 import com.lydiaschiff.hella.RsSurfaceRenderer;
 import com.lydiaschiff.hella.RsUtil;
 import com.lydiaschiff.hella.renderer.DefaultRsRenderer;
+
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -89,8 +92,8 @@ public class RsCameraPreviewRenderer
         }
 
         Log.i(TAG,
-                "Setting up RsCameraPreviewRenderer with " + rsRenderer.getName() + " (" + x + "," +
-                        y + ")");
+                "Setting up RsCameraPreviewRenderer with " + rsRenderer.getName() +
+                        " (" + x + "," + y + ")");
 
         yuvInAlloc = RsUtil.createYuvIoInputAlloc(rs, x, y, ImageFormat.YUV_420_888);
         yuvInAlloc.setOnBufferAvailableListener(this);
@@ -104,7 +107,7 @@ public class RsCameraPreviewRenderer
 
     @Override
     @AnyThread
-    public synchronized void setRsRenderer(RsRenderer rsRenderer) {
+    public synchronized void setRsRenderer(@NonNull RsRenderer rsRenderer) {
         if (isRunning()) {
             this.rsRenderer = rsRenderer;
             Log.i(TAG, "updating RsRenderer to \"" + rsRenderer.getName() + "\"");
@@ -143,7 +146,7 @@ public class RsCameraPreviewRenderer
      */
     @AnyThread
     @Override
-    public synchronized void setOutputSurface(Surface outputSurface) {
+    public synchronized void setOutputSurface(@NonNull Surface outputSurface) {
         if (isRunning()) {
             if (!outputSurface.isValid()) {
                 throw new IllegalArgumentException("output was invalid");

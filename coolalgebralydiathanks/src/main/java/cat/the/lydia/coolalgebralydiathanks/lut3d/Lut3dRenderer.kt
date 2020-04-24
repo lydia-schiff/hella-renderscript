@@ -4,11 +4,13 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsic3DLUT
+import cat.the.lydia.coolalgebralydiathanks.Color
 import cat.the.lydia.coolalgebralydiathanks.ColorCube
+import cat.the.lydia.coolalgebralydiathanks.ColorFunc
 import cat.the.lydia.coolalgebralydiathanks.utils.RsFriend
 import com.lydiaschiff.hella.RsRenderer
 
-class Lut3dRenderer : RsRenderer {
+class Lut3dRenderer : RsRenderer, ColorFunc {
 
     // all guarded by "this"
     private var lut3dScript: ScriptIntrinsic3DLUT? = null
@@ -29,17 +31,6 @@ class Lut3dRenderer : RsRenderer {
     }
 
     @Synchronized
-    fun reset() {
-        lut3dScript?.destroy()
-        lut3dScript = null
-        lutAlloc?.destroy()
-        lutAlloc = null
-        hasUpdate = true
-        colorCube = ColorCube.identity
-        currentLutHash = colorCube.hashCode()
-    }
-
-    @Synchronized
     override fun renderFrame(rs: RenderScript, inAlloc: Allocation, outAlloc: Allocation) {
         val script = lut3dScript ?: ScriptIntrinsic3DLUT.create(rs, Element.RGBA_8888(rs))
                 .also { lut3dScript = it }
@@ -54,7 +45,26 @@ class Lut3dRenderer : RsRenderer {
         script.forEach(inAlloc, outAlloc)
     }
 
-    override fun getName() = "Lut3dRenderer Cool Algebra!"
+    override val name = "Lut3dRenderer Cool Algebra!"
 
     override fun canRenderInPlace() = true
+
+    override fun mapColor(color: Color): Color {
+        TODO("Not yet implemented")
+    }
+
+    override fun mapColors(colors: List<Color>): List<Color> {
+        TODO("Not yet implemented")
+    }
+
+    @Synchronized
+    fun reset() {
+        lut3dScript?.destroy()
+        lut3dScript = null
+        lutAlloc?.destroy()
+        lutAlloc = null
+        hasUpdate = true
+        colorCube = ColorCube.identity
+        currentLutHash = colorCube.hashCode()
+    }
 }

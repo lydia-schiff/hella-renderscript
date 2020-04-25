@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import cat.the.lydia.coolalgebralydiathanks.implementation.RsLut3dRenderer
+import cat.the.lydia.coolalgebralydiathanks.utils.CubeFileParser
 import com.lydiaschiff.hella.FrameStats
 import com.lydiaschiff.hella.Hella
 import com.lydiaschiff.hella.RsRenderer
@@ -83,6 +84,10 @@ class RsViewfinderActivity : BaseViewfinderActivity() {
     private fun updateRsRenderer() =
             try {
                 val renderer = rendererTypes[currentRendererIndex].newInstance()
+                // todo: hack!
+                if (currentRendererIndex == 2) {
+                    (renderer as RsLut3dRenderer).setColorCube(CubeFileParser.loadCubeResource(this, R.raw.fg_cine_drama_17))
+                }
                 rendererName = renderer.name
                 cameraPreviewRenderer?.setRsRenderer(renderer)
                 frameStats.clear()
@@ -154,6 +159,7 @@ class RsViewfinderActivity : BaseViewfinderActivity() {
         private val rendererTypes: List<Class<out RsRenderer>> =
                 listOf(
                         DefaultRsRenderer::class.java,
+                        RsLut3dRenderer::class.java,
                         RsLut3dRenderer::class.java,
                         GreyscaleRsRenderer::class.java,
                         SharpenRenderer::class.java,

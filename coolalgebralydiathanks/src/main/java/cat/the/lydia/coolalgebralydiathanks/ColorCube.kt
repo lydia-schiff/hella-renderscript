@@ -5,7 +5,8 @@ import cat.the.lydia.coolalgebralydiathanks.CoolAlgebra.N
 data class ColorCube(val colors: List<Color>) {
 
     init {
-        require(colors.size == N_COLORS) { "oops, we need exactly N^3=$N_COLORS colors" }
+        require(colors.size == N_COLORS) {
+            "oops, colors.size=${colors.size} we need exactly N^3=$N_COLORS colors" }
     }
 
     /**

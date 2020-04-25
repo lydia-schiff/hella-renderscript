@@ -2,7 +2,11 @@
 - Example app for RGB Rendering for Bitmaps and the camera viewfinder.
 - Associated talk: [_Hella-Parallel Compute with RenderScript_](https://youtu.be/eebG8SMYD20) at droidcon sf 2017.
 
-## References!
+## Cool algebra, Lydia! Thanks!
+- This project is also being used as a base and test harness for a new project based on trying to define an abstract algebra of Colors, Photos, and ColorCubes (3DLUTs), and implement it on Android using Renderscript. It's WIP, but pretty fun.
+- Note: As part of this I'm going to start to convert App and Hella classes to kotlin.
+
+## RS References!
 ### Essentials + source code (somtimes the best docs we have)
 [RS Developer Guide](https://developer.android.com/guide/topics/renderscript/compute.html)
 

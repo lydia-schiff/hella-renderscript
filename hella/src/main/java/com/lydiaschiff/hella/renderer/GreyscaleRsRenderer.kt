@@ -26,7 +26,7 @@ class GreyscaleRsRenderer : RsRenderer {
 
     override val name = "Greyscale with ScriptIntrinsicColorMatrix"
 
-    override fun canRenderInPlace() = true
+    override val canRenderInPlace = true
 
     companion object {
         private fun createScript(rs: RenderScript, e: Element): ScriptIntrinsicColorMatrix {

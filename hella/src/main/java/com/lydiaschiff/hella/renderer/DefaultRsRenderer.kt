@@ -17,5 +17,5 @@ class DefaultRsRenderer : RsRenderer {
 
     override val name = "default (no edits applied)"
 
-    override fun canRenderInPlace() = true
+    override val canRenderInPlace = true
 }

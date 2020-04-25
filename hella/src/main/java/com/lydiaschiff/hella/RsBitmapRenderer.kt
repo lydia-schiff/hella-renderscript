@@ -22,7 +22,7 @@ open class RsBitmapRenderer(private val rs: RenderScript, private val rsRenderer
     /**
      * If true, inBitmap is allowed to be the same as outBitmap, else false.
      */
-    fun canRenderInPlace() = canModifyInputBitmap && rsRenderer.canRenderInPlace()
+    fun canRenderInPlace() = canModifyInputBitmap && rsRenderer.canRenderInPlace
 
     /**
      * Apply RsRenderer to a Bitmap. If provided the output bitmap will be written to. The input
@@ -105,7 +105,7 @@ open class RsBitmapRenderer(private val rs: RenderScript, private val rsRenderer
 
         private fun rsRendererToString(rsRenderer: RsRenderer): String =
                 "RsRenderer{name=${rsRenderer.name}, " +
-                        "canRenderInPlace=${rsRenderer.canRenderInPlace()}"
+                        "canRenderInPlace=${rsRenderer.canRenderInPlace}"
     }
 
 }

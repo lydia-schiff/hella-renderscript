@@ -59,5 +59,5 @@ class RsLut3dRenderer(private var colorCube : ColorCube) : RsRenderer {
 
     override val name = "Lut3dRenderer Cool Algebra!"
 
-    override fun canRenderInPlace() = true
+    override val canRenderInPlace = true
 }

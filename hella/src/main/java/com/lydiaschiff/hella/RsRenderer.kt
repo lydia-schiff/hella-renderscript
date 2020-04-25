@@ -29,5 +29,5 @@ interface RsRenderer {
      * Check if this is a pixel edit where the in and out allocations can be the same object.
      * This allows for optimizations in certain cases.
      */
-    fun canRenderInPlace(): Boolean
+    val canRenderInPlace: Boolean
 }

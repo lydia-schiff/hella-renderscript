@@ -16,7 +16,7 @@ class SharpenRenderer : RsRenderer {
     override fun renderFrame(rs: RenderScript, inAlloc: Allocation, outAlloc: Allocation) {
         val script = sharpenScript ?: ScriptIntrinsicConvolve5x5.create(rs, inAlloc.element)
                 .also {
-                    it.setCoefficients(createSharpenKernel5x5(SHARPEN_INTENSITY))
+                    it.setCoefficients(createSharpenKernel5x5())
                     sharpenScript = it
                 }
         script.setInput(inAlloc)
@@ -25,7 +25,7 @@ class SharpenRenderer : RsRenderer {
 
     override val name = "RGB sharpen with ScriptInstrinsic5x5Convolve"
 
-    override fun canRenderInPlace() = false
+    override val canRenderInPlace = false
 
     companion object {
         private const val SHARPEN_INTENSITY = 1.0f
@@ -36,8 +36,8 @@ class SharpenRenderer : RsRenderer {
          * @param intensity sharpen intensity in [0,1]
          * @return new 5x5 sharpen kernel
          */
-        private fun createSharpenKernel5x5(intensity: Float): FloatArray {
-            val centralWeightValue = 180.0f - intensity * 130.0f
+        private fun createSharpenKernel5x5(): FloatArray {
+            val centralWeightValue = 180.0f - SHARPEN_INTENSITY * 130.0f
             val totalWeight = centralWeightValue - 32.0f
             val x = -1.0f / totalWeight
             val y = -2.0f / totalWeight

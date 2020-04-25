@@ -21,8 +21,6 @@ class ResizeRsRenderer : RsRenderer {
     override val name = "bicubic resize with ScriptInstrinsicResize"
 
 
-    override fun canRenderInPlace(): Boolean {
-        // input and output allocations are not the same size
-        return true
-    }
+    // input and output allocations are not the same size todo: this is confusing
+    override val canRenderInPlace = true
 }

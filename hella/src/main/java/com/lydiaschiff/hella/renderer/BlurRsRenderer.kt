@@ -24,7 +24,7 @@ class BlurRsRenderer : RsRenderer {
 
     override val name: String = "Gaussian blur (radius $BLUR_RADIUS) with ScriptIntrinsicBlur"
 
-    override fun canRenderInPlace() = false
+    override val canRenderInPlace = false
 
     companion object {
         private const val BLUR_RADIUS = 10f // in range [0, 25]

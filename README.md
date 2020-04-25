@@ -4,7 +4,7 @@
 
 ## Cool algebra, Lydia! Thanks!
 - This repo is also being used as a base-app and test harness for a new project. It's focused on trying to define an abstract algebra of Colors, Photos, and ColorCubes (3D LUTs), and implement it on Android using Renderscript. It's WIP, but pretty fun.
-- Note: As part of this I'm going to start to convert App and Hella classes to kotlin.
+- Note: As part of this ~~I'm going to start to~~ I did convert App and Hella classes to kotlin.
 
 ## RS References!
 ### Essentials + source code (somtimes the best docs we have)

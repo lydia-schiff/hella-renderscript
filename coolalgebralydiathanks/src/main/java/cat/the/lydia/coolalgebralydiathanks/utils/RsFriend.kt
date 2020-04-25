@@ -1,14 +1,12 @@
 package cat.the.lydia.coolalgebralydiathanks.utils
 
-import android.renderscript.Allocation
-import android.renderscript.Element
-import android.renderscript.RenderScript
-import android.renderscript.Type
+import android.renderscript.*
 import cat.the.lydia.coolalgebralydiathanks.Color
 import cat.the.lydia.coolalgebralydiathanks.ColorCube
 import cat.the.lydia.coolalgebralydiathanks.CoolAlgebra
 
 object RsFriend {
+
     // When we copy Int unchecked into renderscript U8_4 we have to swap red and blue in the normal
     // ColorInt. much endian. very byte-order.
     fun swapRb(c: Int): Int = android.graphics.Color.rgb(
@@ -47,4 +45,6 @@ object RsFriend {
             IntArray(size)
                     .also { alloc.copy1DRangeToUnchecked(0, size, it) }
                     .map(::rsPackedColor8888ToColor)
+
+    fun lut3dScript(rs : RenderScript) = ScriptIntrinsic3DLUT.create(rs, Element.RGBA_8888(rs))
 }

@@ -9,7 +9,7 @@ data class Photo(
         val height: Int
 ) {
     init {
-        require(width > 0 && height > 0) { "oops, no empty Photos" }
-        require(colors.size == width * height) { "oops, we need exact size lists" }
+        require(width > 0 && height > 0) { "oops!" }
+        require(colors.size == width * height) { "oops, exact size lists please!" }
     }
 }

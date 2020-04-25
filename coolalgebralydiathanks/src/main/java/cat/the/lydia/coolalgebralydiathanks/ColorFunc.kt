@@ -14,7 +14,7 @@ interface ColorFunc {
             CoolAlgebra.applyColorFuncToColors(this, colors)
 
     infix operator fun times(cube: ColorCube): ColorCube =
-            CoolAlgebra.applyColorFunToColorCube(this, cube)
+            CoolAlgebra.applyColorFuncToColorCube(this, cube)
 
     infix operator fun times(photo: Photo): Photo =
             CoolAlgebra.applyColorFuncToPhoto(this, photo)

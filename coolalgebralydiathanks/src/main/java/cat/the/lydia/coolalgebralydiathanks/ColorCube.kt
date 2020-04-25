@@ -14,18 +14,20 @@ data class ColorCube(val colors: List<Color>) {
      */
     private val function: ColorFunc by lazy { CoolAlgebra.colorCubeToColorFunc(this) }
 
-    fun toColorFunc() : ColorFunc = function
+    fun toColorFunc(): ColorFunc = function
 
-    infix operator fun times(colors : List<Color>) =
+    infix operator fun times(colors: List<Color>) =
             CoolAlgebra.applyColorFuncToColors(function, colors)
 
     infix operator fun times(photo: Photo) =
             CoolAlgebra.applyColorFuncToPhoto(function, photo)
 
-    infix operator fun times(rhs : ColorCube) =
+    // our binary operation!
+    infix operator fun times(rhs: ColorCube) =
             CoolAlgebra.applyColorCubeToColorCube(this, rhs)
 
     companion object {
+
         const val N_COLORS = N * N * N
 
         /**
@@ -33,7 +35,7 @@ data class ColorCube(val colors: List<Color>) {
          * sampling of RGB that defines what makes our ColorCube's Colors into a 3DLUT-based
          * ColorFunc!
          */
-        val identity = ColorCube(identityColorLattice())
+        val identity :ColorCube by lazy { ColorCube(identityColorLattice()) }
 
         /**
          * The Colors corresponding to each point in the 3D lattice of uniformly spaced samples of

@@ -31,6 +31,8 @@ import com.lydiaschiff.hellaparallel.renderers.TrailsRenderer;
 import java.util.ArrayList;
 import java.util.List;
 
+import cat.the.lydia.coolalgebralydiathanks.implementation.RsLut3dRenderer;
+
 
 @RequiresApi(21)
 public class RsViewfinderActivity extends BaseViewfinderActivity {
@@ -53,6 +55,7 @@ public class RsViewfinderActivity extends BaseViewfinderActivity {
     static {
         rendererTypes = new ArrayList<>();
         rendererTypes.add(DefaultRsRenderer.class);
+        rendererTypes.add(RsLut3dRenderer.class);
         rendererTypes.add(GreyscaleRsRenderer.class);
         rendererTypes.add(SharpenRenderer.class);
         rendererTypes.add(BlurRsRenderer.class);

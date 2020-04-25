@@ -3,7 +3,7 @@
 - Associated talk: [_Hella-Parallel Compute with RenderScript_](https://youtu.be/eebG8SMYD20) at droidcon sf 2017.
 
 ## Cool algebra, Lydia! Thanks!
-- This project is also being used as a base and test harness for a new project based on trying to define an abstract algebra of Colors, Photos, and ColorCubes (3DLUTs), and implement it on Android using Renderscript. It's WIP, but pretty fun.
+- This repo is also being used as a base-app and test harness for a new project. It's focused on trying to define an abstract algebra of Colors, Photos, and ColorCubes (3D LUTs), and implement it on Android using Renderscript. It's WIP, but pretty fun.
 - Note: As part of this I'm going to start to convert App and Hella classes to kotlin.
 
 ## RS References!

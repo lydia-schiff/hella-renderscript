@@ -27,7 +27,10 @@ object RsFriend {
                     type.x == CoolAlgebra.N &&
                     type.x == CoolAlgebra.N)
 
-    fun lut3dAlloc(rs: RenderScript) = Allocation.createTyped(rs, lut3dType(rs))
+    fun lut3dAlloc(rs: RenderScript): Allocation = Allocation.createTyped(rs, lut3dType(rs))
+
+    fun lut3dAlloc(rs: RenderScript, cube: ColorCube): Allocation =
+            lut3dAlloc(rs).apply { copyColorCubeToLutAlloc(cube, this) }
 
     fun copyColorCubeToLutAlloc(cube: ColorCube, lutAlloc: Allocation) {
         checkLut3dType(lutAlloc.type)
@@ -41,10 +44,10 @@ object RsFriend {
                 .also { alloc.copyFromUnchecked(it) }
     }
 
-    fun allocToColors(alloc : Allocation, size :Int) : List<Color> =
+    fun allocToColors(alloc: Allocation, size: Int): List<Color> =
             IntArray(size)
                     .also { alloc.copy1DRangeToUnchecked(0, size, it) }
                     .map(::rsPackedColor8888ToColor)
 
-    fun lut3dScript(rs : RenderScript) = ScriptIntrinsic3DLUT.create(rs, Element.RGBA_8888(rs))
+    fun lut3dScript(rs: RenderScript) = ScriptIntrinsic3DLUT.create(rs, Element.RGBA_8888(rs))
 }

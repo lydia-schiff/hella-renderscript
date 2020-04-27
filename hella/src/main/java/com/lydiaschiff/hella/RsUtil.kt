@@ -6,7 +6,10 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.Type
+import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.roundToInt
 
 /**
  * Static utilities for Renderscript. I'm going to leave in any unneeded API annotations because
@@ -99,4 +102,88 @@ object RsUtil {
             if (Build.VERSION.SDK_INT >= 19) Element.YUV(rs)
             else Element.createPixel(rs, Element.DataType.UNSIGNED_8, Element.DataKind.PIXEL_YUV)
 
+    /**
+     * A 3D Type suitable for color LUT data for use with ScriptIntrinsic3DLUT.
+     */
+    fun lut3dType(rs: RenderScript, x: Int, y: Int = x, z: Int = x) =
+            if (Build.VERSION.SDK_INT >= 21) Type.createXYZ(rs, Element.RGBA_8888(rs), x, y, x)
+            else Type.Builder(rs, Element.RGBA_8888(rs)).setX(x).setY(y).setZ(z).create()
+
+    /**
+     * A cubic 3D Allocation suitable for color LUT data for use with ScriptIntrinsic3DLUT.
+     */
+    fun lut3dAlloc(
+            rs: RenderScript,
+            setIdentity: Boolean,
+            x: Int,
+            y: Int = x,
+            z: Int = x
+    ): Allocation = Allocation.createTyped(rs, lut3dType(rs, x, y, z)).also {
+        if (setIdentity) IdentityLut.setIdentityLutData(it)
+    }
+
+
+    fun copyColorIntsToAlloc(colorInts: IntArray, lut3dAlloc: Allocation) {
+        val buffer = PooledBuffer.acquire(colorInts.size)
+        colorInts.forEachIndexed { n, c -> buffer[n] = colorIntToRsPackedColor8888(c) }
+        lut3dAlloc.copyFromUnchecked(buffer)
+        PooledBuffer.returnBuffer(buffer)
+    }
+
+    fun copyRgbFloatsToAlloc(rgbFloats: FloatArray, lut3dAlloc: Allocation) {
+        val nColors = rgbFloats.size / 3
+        require(lut3dAlloc.type.count == nColors)
+        val buffer = PooledBuffer.acquire(nColors)
+        for (n in 0 until nColors) {
+            buffer[n] = rsPackedColor8888(rgbFloats, n * 3)
+        }
+        lut3dAlloc.copyFromUnchecked(buffer)
+        PooledBuffer.returnBuffer(buffer)
+    }
+
+    /**
+     * Able to be copied unchecked into an alloc with RGBA_8888 or U8_4 elements.
+     */
+    fun rsPackedColor8888(r: Int, g: Int, b: Int): Int = 0xff00000 or (b shl 16) or (g shl 8) or r
+    fun rsPackedColor8888(r: Float, g: Float, b: Float): Int = rsPackedColor8888(
+            (r * 255).roundToInt() and 0xff,
+            (g * 255).roundToInt() and 0xff,
+            (b * 255).roundToInt() and 0xff)
+
+    fun rsPackedColor8888(rgbFloats: FloatArray, start: Int) = rsPackedColor8888(
+            rgbFloats[start],
+            rgbFloats[start + 1],
+            rgbFloats[start + 2])
+
+    fun colorIntToRsPackedColor8888(@ColorInt c: Int): Int = swapRb(c)
+
+    @ColorInt
+    fun rsPackedColor8888ToColorInt(c: Int): Int = swapRb(c)
+
+    /**
+     * When we convert an Android ColorInt unchecked into renderscript U8_4, we have to swap red
+     * and blue. Much endian. Very bit-shifting.
+     */
+    private fun swapRb(c: Int): Int {
+        val r = c shr 16 and 0xff
+        val g = c shr 8 and 0xff
+        val b = c and 0xff
+        return 0xff00000 or (b shl 16) or (g shl 8) or r
+    }
+
+    /**
+     * There are certain calling patterns during rendering where we may need to update a 3D LUT
+     * allocation using an IntArray of fixed size as often as several times per-second. This is a
+     * thread-safe way to not allocate big IntArrays repeatedly inside a render loop.
+     */
+    object PooledBuffer {
+        private val pooledBuffer = AtomicReference<IntArray>()
+
+        fun acquire(size: Int): IntArray = pooledBuffer.getAndSet(null)
+                ?.takeIf { it.size == size } ?: IntArray(size)
+
+        fun returnBuffer(buffer: IntArray) = pooledBuffer.compareAndSet(null, buffer)
+
+        fun release() = pooledBuffer.set(null)
+    }
 }

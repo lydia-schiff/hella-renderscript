@@ -1,6 +1,5 @@
 package cat.the.lydia.coolalgebralydiathanks.implementation
 
-import android.telecom.Call
 import cat.the.lydia.coolalgebralydiathanks.Color
 import cat.the.lydia.coolalgebralydiathanks.ColorCube
 import cat.the.lydia.coolalgebralydiathanks.ColorFunc
@@ -28,42 +27,6 @@ data class KotlinCpuColorFunc(
 
     companion object {
         const val DEFAULT_BATCH_SIZE = ColorCube.N_COLORS / 2
-
-        /**
-         * Apply a ColorCube to a list of colors sequentially.
-         */
-        fun trilinearInterpolateColors(
-                cube: ColorCube,
-                colors: List<Color>
-        ): List<Color> = colors.map { trilinearInterpolateColor(cube, it) }
-
-        /**
-         * Apply a ColorCube to a list of colors in parallel.
-         */
-        fun trilinearInterpolateColorsInParallel(
-                cube: ColorCube,
-                colors: List<Color>,
-                executor: ExecutorService,
-                batchSize: Int = DEFAULT_BATCH_SIZE
-        ): List<Color> {
-            val size = batchSize.coerceIn(0, colors.size)
-            val tasks = mutableListOf<Future<List<Color>>>()
-
-            var remaining = colors.size
-            var n = 0
-
-            while (remaining > 0) {
-                val start = n
-                val end = (n + size).coerceAtMost(colors.size)
-                tasks += executor.submit(Callable {
-                    trilinearInterpolateColors(cube, colors.subList(start, end))
-                })
-                n += batchSize
-                remaining -= size
-            }
-
-            return mutableListOf<Color>().apply { tasks.forEach { addAll(it.get()) } }
-        }
 
         /**
          * Use tri-linear interpolation to apply a ColorCube to a Color.
@@ -99,6 +62,43 @@ data class KotlinCpuColorFunc(
             // Interpolate once more in the blue direction to collapse the line to a point,
             // our Color!
             return Color.lerp(c0xx, c1xx, position.localOffset.b)
+        }
+
+
+        /**
+         * Apply a ColorCube to a list of colors sequentially.
+         */
+        fun trilinearInterpolateColors(
+                cube: ColorCube,
+                colors: List<Color>
+        ): List<Color> = colors.map { trilinearInterpolateColor(cube, it) }
+
+        /**
+         * Apply a ColorCube to a list of colors in parallel.
+         */
+        fun trilinearInterpolateColorsInParallel(
+                cube: ColorCube,
+                colors: List<Color>,
+                executor: ExecutorService,
+                batchSize: Int = DEFAULT_BATCH_SIZE
+        ): List<Color> {
+            val size = batchSize.coerceIn(0, colors.size)
+            val tasks = mutableListOf<Future<List<Color>>>()
+
+            var remaining = colors.size
+            var n = 0
+
+            while (remaining > 0) {
+                val start = n
+                val end = (n + size).coerceAtMost(colors.size)
+                tasks += executor.submit(Callable {
+                    trilinearInterpolateColors(cube, colors.subList(start, end))
+                })
+                n += batchSize
+                remaining -= size
+            }
+
+            return mutableListOf<Color>().apply { tasks.forEach { addAll(it.get()) } }
         }
     }
 

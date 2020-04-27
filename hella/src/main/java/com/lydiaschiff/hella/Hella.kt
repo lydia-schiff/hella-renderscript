@@ -24,11 +24,10 @@ object Hella {
             val start = System.currentTimeMillis()
             try {
                 val color_frame_script = ScriptC_color_frame(rs)
-                Log.d(TAG, "initialized ScriptC_color_frame.")
                 val set_alpha_script = ScriptC_set_alpha(rs)
-                Log.d(TAG, "initialized ScriptC_set_alpha.")
                 val to_grey_script = ScriptC_to_grey(rs)
-                Log.d(TAG, "initialized ScriptC_to_grey.")
+                Log.d(TAG, "initialized ScriptC_color_frame, " +
+                        "ScriptC_set_alpha, and ScriptC_to_grey.")
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -40,5 +40,12 @@ data class Color(
          * Color value for a random lattice point in a ColorCube.
          */
         fun randomCubeLatticePoint(): Color = ColorCube.cubeLatticePoints.random()
+
+        fun lerp(a: Color, b: Color, scale: Bounded): Color =
+                Color(
+                        Bounded.lerp(a.r, b.r, scale),
+                        Bounded.lerp(a.g, b.g, scale),
+                        Bounded.lerp(a.b, b.b, scale)
+                )
     }
 }

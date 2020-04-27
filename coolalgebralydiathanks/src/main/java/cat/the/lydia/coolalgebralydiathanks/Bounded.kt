@@ -23,5 +23,11 @@ data class Bounded(val value: Float) {
 
         fun random() = Bounded(Random.nextFloat())
         fun randomLatticePoint() = ColorCube.cubeLatticePoints.random()
+
+        fun lerp(a: Float, b: Float, scale: Float): Float =
+                a * (1 - scale) + b * scale
+
+        fun lerp(a: Bounded, b: Bounded, scale: Bounded): Bounded =
+                Bounded(lerp(a.value, b.value, scale.value))
     }
 }

@@ -1,7 +1,7 @@
 package cat.the.lydia.coolalgebralydiathanks
 
 import android.renderscript.RenderScript
-import cat.the.lydia.coolalgebralydiathanks.implementation.RsLut3dRenderer
+import cat.the.lydia.coolalgebralydiathanks.implementation.RsColorCubeRenderer
 import cat.the.lydia.coolalgebralydiathanks.implementation.RsColorFunc
 
 /**
@@ -18,13 +18,14 @@ import cat.the.lydia.coolalgebralydiathanks.implementation.RsColorFunc
 object CoolAlgebra {
     // The size of each edge of our ColorCube! Defines our universe!
     const val N = 17
+    const val N2 = N * N
 
     // We'll need to implement this.
     lateinit var colorCubeToColorFunc: (ColorCube) -> ColorFunc
 
     // here's one way to do it!
     fun initWithRsImplementation(rs: RenderScript) {
-        colorCubeToColorFunc = { cube -> RsColorFunc(rs, RsLut3dRenderer(cube)) }
+        colorCubeToColorFunc = { cube -> RsColorFunc(rs, RsColorCubeRenderer(cube)) }
     }
 
     /**
@@ -69,7 +70,7 @@ object CoolAlgebra {
                     func = cube.toColorFunc(),
                     colors = colors
             )
-    
+
     // ColorFunc * Photo -> Photo
     fun applyColorFuncToPhoto(func: ColorFunc, photo: Photo): Photo {
         val result = applyColorFuncToColors(
@@ -78,7 +79,7 @@ object CoolAlgebra {
         )
         return photo.copy(colors = result)
     }
-    
+
     // ColorCube * Photo -> Photo
     fun applyColorCubeToPhoto(cube: ColorCube, photo: Photo): Photo {
         val result = applyColorFuncToColors(
@@ -87,7 +88,7 @@ object CoolAlgebra {
         )
         return photo.copy(colors = result)
     }
-    
+
     // ColorFunc * ColorCube -> ColorCube
     fun applyColorFuncToColorCube(func: ColorFunc, colorCube: ColorCube): ColorCube {
         val result = applyColorFuncToColors(

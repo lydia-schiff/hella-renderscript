@@ -1,120 +1,54 @@
 package cat.the.lydia.coolalgebralydiathanks
 
-import android.graphics.Bitmap
-import android.renderscript.Allocation
-import android.renderscript.RenderScript
-import androidx.annotation.ColorInt
-import cat.the.lydia.coolalgebralydiathanks.utils.BitmapFriend
-import cat.the.lydia.coolalgebralydiathanks.utils.RsFriend
+import cat.the.lydia.coolalgebralydiathanks.implementation.KotlinCpuTrilinear
+import cat.the.lydia.coolalgebralydiathanks.rs.RsFriend
+import cat.the.lydia.coolalgebralydiathanks.utils.N_CHANNELS_RGB
+import cat.the.lydia.coolalgebralydiathanks.utils.Util
 
-data class ColorCube(val colors: List<Color>) {
+internal const val DO_RENDERSCRIPT_3DLUT = true
+internal const val DO_PARALLEL_3DLUT = true
 
-    init {
-        require(colors.size == N_COLORS) {
-            "Oops, colors.size=${colors.size}! Since CoolAlgebra.N=${CoolAlgebra.N}, we need " +
-                    "exactly N^3=$N_COLORS colors. Thanks!"
-        }
-    }
+internal fun useRenderScript3dLut() = DO_RENDERSCRIPT_3DLUT && RsFriend.initialized
+internal fun useParallelCpu3dLut() = DO_PARALLEL_3DLUT
 
-    constructor(f: ColorFunc) : this(f * identity.colors)
-
-    constructor(rgbFloats: FloatArray) : this(rgbFloats.let {
-        ArrayList<Color>(N_COLORS).apply {
-            require(it.size == N_VALUES_RGB)
-            (0 until N_COLORS).forEach { add(Color(rgbFloats, it)) }
-        }
-    })
-
-    private val function: ColorFunc by lazy { CoolAlgebra.colorCubeToColorFunc(this) }
+open class ColorCube(
+        override val colors: List<Color>
+) : ColorFunc, ColorData {
 
     /**
-     * Our Cool Algebra Knows how to apply this ColorCube as a Function. The ColorFunc is uniquely
-     * defined by our Colors.
+     * For a single color we always use CPU.
      */
-    fun toColorFunc(): ColorFunc = function
-
-    fun toPhoto(landscape: Boolean = true): Photo =
-            if (landscape) Photo(colors, CoolAlgebra.N2, CoolAlgebra.N)
-            else Photo(colors, CoolAlgebra.N2, CoolAlgebra.N)
-
-    fun toBitmap(landscape: Boolean = true): Bitmap = toPhoto(landscape).toBitmap()
-
-    fun toLut3dAllocation(rs: RenderScript): Allocation =
-            RsFriend.lut3dAlloc(rs).also { a -> RsFriend.copyColorCubeToLutAlloc(this, a) }
-
-    @ColorInt
-    fun toColorInts() = IntArray(N_COLORS) { n -> BitmapFriend.colorToColorInt(colors[n]) }
-
-    fun toRgbFloats() = FloatArray(N_COLORS * 3).also {
-        var n = 0
-        colors.forEach { c ->
-            it[n++] = c.r.value
-            it[n++] = c.g.value
-            it[n++] = c.b.value
-        }
-    }
+    override fun apply(color: Color): Color = KotlinCpuTrilinear.applyCubeToColor(this, color)
 
     /**
-     * Apply the cube to a list of colors.
-     */
-    infix operator fun times(colors: List<Color>): List<Color> =
-            CoolAlgebra.applyColorFuncToColors(function, colors)
-
-    /**
-     * Apply the cube to a photo.
-     */
-    infix operator fun times(photo: Photo): Photo =
-            CoolAlgebra.applyColorFuncToPhoto(function, photo)
-
-    /**
-     * Apply the cube to another cube. This is our binary operation! This cube is the left argument
-     * which means that it is applied as a ColorFunc to the right argument cube's colors.
+     * For lists of colors we choose based on the settings at the top of this file, and whether the
+     * RS context has been initialized.
      *
-     * The result is a ColorCube that acts as a function that first applies the right cube then
-     * applies this cube.
+     * For instance, RS 3DLut is not available in junit tests, but may be used in Instrument tests.
      */
-    infix operator fun times(rhs: ColorCube): ColorCube =
-            CoolAlgebra.applyColorCubeToColorCube(this, rhs)
+    override fun apply(colors: List<Color>): List<Color> = when {
+        useRenderScript3dLut() -> RsFriend.applyColorCubeToColors(this, colors)
+        useParallelCpu3dLut() -> KotlinCpuTrilinear.applyCubeToColorsInParallel(
+                this, colors, Util.executor)
+        else -> colors.map(::apply)
+    }
+
+    final override fun toColorCube(): ColorCube = this
+
+    final override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other !is ColorCube -> false
+        else -> colors == other.colors
+    }
+
+    final override fun hashCode(): Int = colors.hashCode()
 
     companion object {
+        const val N = 17
+        const val N2 = N * N
+        const val N_COLORS = N * N * N
+        const val N_VALUES_RGB = N_COLORS * N_CHANNELS_RGB
 
-        const val N_COLORS = CoolAlgebra.N * CoolAlgebra.N * CoolAlgebra.N
-        const val N_VALUES_RGB = N_COLORS * 3
-
-        /**
-         * The Bounded values at each lattice point a ColorCube dimension.
-         */
-        val cubeLatticeSteps: List<Bounded> =
-                (0 until CoolAlgebra.N).map { Bounded(it / (CoolAlgebra.N - 1f)) }
-
-        val cubeLatticePoints: List<Color> = ArrayList<Color>(N_COLORS).apply {
-            for (b in cubeLatticeSteps)
-                for (g in cubeLatticeSteps)
-                    for (r in cubeLatticeSteps)
-                        add(Color(r, g, b))
-        }
-
-        /**
-         * The ColorCube that maps every Color to itself! Looked at another way, this is the exact
-         * sampling of RGB that defines what makes our ColorCube's Colors into a 3DLUT-based
-         * ColorFunc!
-         */
-        val identity : ColorCube = ColorCube(identityColorLattice())
-
-        /**
-         * The Colors corresponding to each point in the 3D lattice of uniformly spaced samples of
-         * RGB space (including the edges)!
-         */
-        private fun identityColorLattice(): List<Color> = ArrayList<Color>(N_COLORS).apply {
-            val step = 1 / (CoolAlgebra.N - 1f)
-            for (z in 0 until CoolAlgebra.N)
-                for (y in 0 until CoolAlgebra.N)
-                    for (x in 0 until CoolAlgebra.N)
-                        add(Color(
-                                r = Bounded(x * step),
-                                g = Bounded(y * step),
-                                b = Bounded(z * step)
-                        ))
-        }
+        val identity: ColorCube = IdentityCube
     }
 }

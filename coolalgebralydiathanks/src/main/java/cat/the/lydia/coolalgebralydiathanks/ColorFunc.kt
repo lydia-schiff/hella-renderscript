@@ -1,47 +1,64 @@
 package cat.the.lydia.coolalgebralydiathanks
 
-/**
- * Something that maps Colors to Colors. There's a version for 1 color and for List<Color> and they
- * need to do the same thing. Sometimes it's easier to implement one than the other.
- */
+import cat.the.lydia.coolalgebralydiathanks.utils.linearInterpolate
+
 interface ColorFunc {
-    fun mapColor(color: Color): Color
-    fun mapColors(colors: List<Color>): List<Color>
+    fun apply(color: Color): Color
+    fun apply(colors: List<Color>): List<Color>
+    fun toColorCube(): ColorCube
 
-    fun toColorCube(): ColorCube = this * ColorCube.identity
+    fun isIdentity(): Boolean = if (ENABLE_IDENTITY_SPECIAL_CASES) this == IdentityCube else false
 
-    infix operator fun times(colors: List<Color>): List<Color> =
-            CoolAlgebra.applyColorFuncToColors(this, colors)
+    fun interpWith(b: ColorFunc, scale: Bounded): ColorCube = linearInterpolate(this, b, scale)
 
-    infix operator fun times(cube: ColorCube): ColorCube =
-            CoolAlgebra.applyColorFuncToColorCube(this, cube)
+    // ColorFunc -> ColorData -> ColorData
+    // a * b = ab
+    infix operator fun times(data: ColorData): ColorData =
+            if (isIdentity()) data
+            else ColorList(apply(data.colors))
 
+    infix operator fun times(data: List<Color>): ColorData = this * data.toColorData()
+
+    // ColorFunc -> Photo -> Photo
     infix operator fun times(photo: Photo): Photo =
-            CoolAlgebra.applyColorFuncToPhoto(this, photo)
+            if (isIdentity()) photo
+            else {
+                Photo(apply(photo.colors), photo.width, photo.height)
+            }
 
-    companion object {
-        /**
-         * The identity function on Color and List<Color>! Do nothing!
-         */
-        val identity = object : ColorFunc {
-            override fun mapColor(color: Color) = color
-            override fun mapColors(colors: List<Color>) = colors
-        }
-
-        /**
-         * Helper to make a ColorFunc from a Color mapping.
-         */
-        fun createFromColorFunction(f: (Color) -> Color) = object : ColorFunc {
-            override fun mapColor(color: Color) = f(color)
-            override fun mapColors(colors: List<Color>) = colors.map(f)
-        }
-
-        /**
-         * Helper to make a ColorFunc from a List<Color> mapping.
-         */
-        fun createFromColorListFunction(f: (List<Color>) -> List<Color>) = object : ColorFunc {
-            override fun mapColor(color: Color) = f(listOf(color)).first()
-            override fun mapColors(colors: List<Color>) = f(colors)
-        }
+    // ColorFunc -> ColorCube -> ColorCube
+    infix operator fun times(cube: ColorCube): ColorCube = when {
+        cube.isIdentity() -> this.toColorCube()
+        this.isIdentity() -> cube
+        this == cube -> cube
+        else -> ColorCube(apply(cube.colors))
     }
+
+    // ColorFunc -> ColorCube -> ColorCube
+    infix operator fun times(cube: ColorFunc): ColorCube = when {
+        cube.isIdentity() -> this.toColorCube()
+        this.isIdentity() -> cube.toColorCube()
+        this == cube -> cube.toColorCube()
+        else -> ColorCube(apply(cube.toColorCube().colors))
+    }
+}
+
+
+/**
+ * A ColorFunc wrapping a (List<Color>) -> List<Color>.
+ */
+class ColorListFunction(val f: (List<Color>) -> List<Color>) : ColorFunc {
+    override fun apply(color: Color): Color = f(listOf(color)).first()
+    override fun apply(colors: List<Color>): List<Color> = f(colors)
+    override fun isIdentity(): Boolean = false
+    override fun toColorCube(): ColorCube = ColorCube(apply(IdentityCube.colors))
+}
+
+class U8ColorFunc(val f: ColorFunc) : ColorFunc {
+    override fun apply(color: Color): Color = f.apply(color).clampToU8Color()
+    override fun apply(colors: List<Color>): List<Color> =
+            f.apply(colors).map(Color::clampToU8Color)
+
+    override fun isIdentity(): Boolean = false
+    override fun toColorCube(): ColorCube = ColorCube(apply(IdentityCube.colors))
 }

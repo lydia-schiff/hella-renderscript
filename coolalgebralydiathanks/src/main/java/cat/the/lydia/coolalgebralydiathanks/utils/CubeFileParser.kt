@@ -21,6 +21,7 @@ object CubeFileParser {
 
     fun loadCubeResource(c: Context, @RawRes id: Int): ColorCube {
         val inputStream = c.resources.openRawResource(id)
+        // todo: this is broken
         return parseCubeFile(inputStream)
     }
 

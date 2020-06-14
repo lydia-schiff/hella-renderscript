@@ -1,16 +1,11 @@
 package cat.the.lydia.coolalgebralydiathanks.implementation
 
-import android.renderscript.Allocation
 import android.renderscript.RenderScript
-import android.renderscript.ScriptIntrinsic3DLUT
 import cat.the.lydia.coolalgebralydiathanks.ColorCube
-import cat.the.lydia.coolalgebralydiathanks.CoolAlgebra
-import cat.the.lydia.coolalgebralydiathanks.utils.CubeFriend
-import cat.the.lydia.coolalgebralydiathanks.utils.RsFriend
-import com.lydiaschiff.hella.RsRenderer
+import cat.the.lydia.coolalgebralydiathanks.rs.RsFriend
 import com.lydiaschiff.hella.renderer.Lut3dRsRenderer
 
-class RsColorCubeRenderer(private var colorCube : ColorCube) : Lut3dRsRenderer(CoolAlgebra.N) {
+class RsColorCubeRenderer(private var colorCube : ColorCube) : Lut3dRsRenderer(ColorCube.N) {
 
     private var cubeUpdate = false
 

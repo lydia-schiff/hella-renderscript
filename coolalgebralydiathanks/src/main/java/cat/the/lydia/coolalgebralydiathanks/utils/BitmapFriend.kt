@@ -8,6 +8,9 @@ import cat.the.lydia.coolalgebralydiathanks.Color
 import cat.the.lydia.coolalgebralydiathanks.Photo
 import kotlin.math.roundToInt
 
+/**
+ * Aww.. Thanks BitmapFriend!
+ */
 object BitmapFriend {
 
     fun colorIntToColor(@ColorInt c: Int): Color =

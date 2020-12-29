@@ -21,7 +21,7 @@
 
 ### Excellent examples with walkthoughs
 #### Marchetti book + examples
-Renderscript: Parallel Computing on Android the Easy Way
+[Renderscript: Parallel Computing on Android the Easy Way](https://hydex11.net/renderscript_parallel_computing_on_android_the_easy_way)
 - [book examples](https://github.com/csarron/renderscript_examples)
 
 [Google codelabs: Artistic style transfer and other advanced image editing](https://codelabs.developers.google.com/codelabs/android-style-transfer/index.html)

@@ -22,7 +22,7 @@
 ### Excellent examples with walkthoughs
 #### Marchetti book + examples
 Renderscript: Parallel Computing on Android the Easy Way
-- [book examples](https://bitbucket.org/cmaster11/rsbookexamples)
+- [book examples](https://github.com/csarron/renderscript_examples)
 
 [Google codelabs: Artistic style transfer and other advanced image editing](https://codelabs.developers.google.com/codelabs/android-style-transfer/index.html)
 - neural network compute on device!
